@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <title>Personal Budget Tracker</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <h1>Welcome to Your Budget Tracker</h1>
+    <form id="transaction-form">
+        <label>Amount: <input type="number" id="amount"></label>
+        <label>Type: 
+            <select id="type">
+                <option>Income</option>
+                <option>Expense</option>
+            </select>
+        </label>
+        <label>Category: <input type="text" id="category"></label>
+        <label>Date: <input type="date" id="date"></label>
+        <button type="submit">Add</button>
+    </form>
+    <div id="transactions"></div>
+    <div id="charts"></div>
+    <script src="script.js"></script>
+</body>
+</html>
