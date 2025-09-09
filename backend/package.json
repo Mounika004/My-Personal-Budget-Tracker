@@ -1,21 +1,16 @@
 {
-"name": "budget-tracker-api",
-"version": "1.0.0",
-"type": "module",
-"main": "server.js",
-"scripts": {
-"start": "node server.js",
-"dev": "nodemon server.js"
-},
-"dependencies": {
-"cors": "^2.8.5",
-"dotenv": "^16.4.5",
-"express": "^4.19.2",
-"firebase-admin": "^12.5.0",
-"sqlite": "^5.1.6",
-"sqlite3": "^5.1.7"
-},
-"devDependencies": {
-"nodemon": "^3.1.0"
-}
+  "name": "budget-tracker-api",
+  "version": "1.0.0",
+  "type": "module",
+  "main": "server.js",
+  "scripts": {
+    "dev": "node server.js",
+    "start": "node server.js",
+    "migrate": "node server.js migrate"
+  },
+  "dependencies": {
+    "dotenv": "^16.4.5",
+    "express": "^4.19.2",
+    "sqlite3": "^5.1.7"
+  }
 }
