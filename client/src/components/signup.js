@@ -1,65 +1,103 @@
-import React from 'react';
-import '../styles/signup.css';
-import { withRouter } from "react-router-dom";
+import React from "react";
+import "../styles/signup.css";
+import Header from "./Header";
+import { withRouter, Link } from "react-router-dom";
+import { instance } from "../utils/AxiosConfig";
 
-import {instance} from '../utils/AxiosConfig';
 var obj = {};
- const SignUp = (props)=>{
-   return(
-   
-      <div className = "container signup">
-      
-      <div className = "signup-logo">
-    <img  src={require("../images/logo.png")} alt=""/>
-    </div>
 
+const SignUp = (props) => {
+  const handleSignup = () => {
+    if (!obj.username || !obj.email || !obj.password) {
+      alert("Form is Incomplete");
+      return;
+    }
 
-    <div className = "signup-form">
-      <h3>INTRODUCE YOURSELF</h3>
-      <label htmlFor="">Hi there! My name is</label>
+    instance
+      .post("/signup", obj)
+      .then((response) => {
+        const { Status } = response.data;
+        if (Status === "S") {
+          alert("Successful Registered");
+          props.history.push("/Dashboard");
+        } else if (Status === "F") {
+          alert("Username or Email Id Already exist");
+        }
+      })
+      .catch(() => {
+        alert("Something went wrong. Please try again.");
+      });
+  };
 
-      <input id = "username" onChange = {(event)=>{
-       obj[event.target.id] = event.target.value;
-      }} className = "form-control" type="text" required/>
+  return (
+    <>
+      {/* NEW: show header on the Sign Up page */}
+      <Header />
 
-      <label htmlFor="">Here’s my email address: </label>
+      <div className="container signup">
+        <div className="signup-logo">
+          <img src={require("../images/logo.png")} alt="App logo" />
+        </div>
 
-      <input id = "email" onChange = {(event)=>{
-       obj[event.target.id] = event.target.value;
-      }} className = "form-control" type="text" required/>
+        <div className="signup-form">
+          <h3>INTRODUCE YOURSELF</h3>
 
-      <label htmlFor="">And here’s my password:  </label>
+          <label htmlFor="username">Hi there! My name is</label>
+          <input
+            id="username"
+            onChange={(event) => {
+              obj[event.target.id] = event.target.value;
+            }}
+            className="form-control"
+            type="text"
+            required
+          />
 
-      <input id = "password" onChange = {(event)=>{
-       obj[event.target.id] = event.target.value;
-      }} className = "form-control" type="text" required/>
+          <label htmlFor="email">Here’s my email address:</label>
+          <input
+            id="email"
+            onChange={(event) => {
+              obj[event.target.id] = event.target.value;
+            }}
+            className="form-control"
+            type="email"
+            required
+          />
 
-     <button onClick = {()=>{
-       console.log(obj);
-       if(obj.password == undefined || obj.email == undefined || obj.username == undefined){
-          alert("form is Incomplete");
-       }
-   else{
-       var pr = instance.post('/signup',obj);
-       pr.then((response)=>{
-          console.log(response.data.Status);
-          if(response.data.Status == "S"){
-             alert("successful Registerd");
-             props.history.push("/Dashboard");
-          }else if(response.data.Status == "F"){
-             alert("username or Email Id Already exist");
-          }
-       })}
-     }} className = "btn">Sign me up!</button>
-     
-   </div>
+          <label htmlFor="password">And here’s my password:</label>
+          <input
+            id="password"
+            onChange={(event) => {
+              obj[event.target.id] = event.target.value;
+            }}
+            className="form-control"
+            type="password"
+            required
+          />
 
+          <div className="actions">
+            <button onClick={handleSignup} className="btn primary">
+              Sign me up!
+            </button>
+            <button
+              type="button"
+              onClick={() => props.history.push("/login")}
+              className="btn outline"
+            >
+              Log in
+            </button>
+          </div>
 
-
-   </div>
-
-   
-   )
-} 
+          <p className="alt-action">
+            Already have an account?{" "}
+            <Link to="/login" className="login-link">
+              Go to Login
+            </Link>
+          </p>
+        </div>
+      </div>
+    </>
+  );
+};
 
 export default withRouter(SignUp);
