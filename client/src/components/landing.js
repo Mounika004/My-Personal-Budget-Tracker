@@ -32,7 +32,7 @@ export default function Landing() {
           <ul className="bullets">
             <li>• One-click expense splits</li>
             <li>• Friend balances at a glance</li>
-            <li>• Cloud sync with JWT security</li>
+            <li>• Cloud sync with security</li>
           </ul>
         </div>
 
@@ -53,7 +53,7 @@ export default function Landing() {
         <div className="feature glass">
           <div className="f-icon">🔒</div>
           <h3>Private by Design</h3>
-          <p>JWT auth + MongoDB so your data stays yours.</p>
+          <p>Authentication Enabled. So your data stays yours.</p>
         </div>
         <div className="feature glass">
           <div className="f-icon">📊</div>
