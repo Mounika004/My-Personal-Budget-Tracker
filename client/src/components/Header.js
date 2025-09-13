@@ -1,37 +1,37 @@
 import React from "react";
-import { NavLink } from "react-router-dom";
-import { connect } from "react-redux";
+import { Link, useLocation } from "react-router-dom";
+import "../styles/siteHeader.css";
+import ThemeToggle from "./common/ThemeToggle";
 
-import "../styles/landing.css";
-const Header = (props) => {
-  {
-    console.log(props.user);
-  }
+export default function Header() {
+  const { pathname } = useLocation();
+
   return (
-    <nav className="landingNav fixed-top">
-      <NavLink to="/">
-        <h3 className="landing-name">B U D G E T - T R A C K E R</h3>
-      </NavLink>
-
-      <div className="float">
-        <NavLink to="/login">
-          <button className="loginBtn">Log In</button>
-        </NavLink>
-        <label htmlFor="">or</label>
-        <NavLink to="/signup">
-          <button className="SignUp">Sign Up</button>
-        </NavLink>
+    <header className="site-header glass">
+      <div className="site-header__left">
+        <Link to="/" className="brand">
+          <span className="brand-mark">💰</span>
+          <span className="brand-text">Budget Tracker</span>
+        </Link>
       </div>
-    </nav>
+
+      <nav className="site-header__nav">
+        {/* 3-state theme: Auto / Light / Dark */}
+        <ThemeToggle compact />
+
+        <Link className={`nav-link ${pathname === "/" ? "active" : ""}`} to="/">
+          Home
+        </Link>
+        <Link
+          className={`nav-link ${pathname === "/login" ? "active" : ""}`}
+          to="/login"
+        >
+          Login
+        </Link>
+        <Link className="btn" to="/signup">
+          Sign Up
+        </Link>
+      </nav>
+    </header>
   );
-};
-
-const mapStateToProps = (state) => {
-  console.log("state is  ", state);
-  return {
-    user: state.user,
-  };
-};
-
-const fn = connect(mapStateToProps);
-export default fn(Header);
+}

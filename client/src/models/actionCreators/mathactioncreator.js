@@ -1,6 +1,1 @@
-export const mathActionCreator = (user,opr)=>{
-    return{
-        payload: {...user},
-        type: opr
-    };
-}
+export const add = (a, b) => ({ type: "ADD", payload: a + b });

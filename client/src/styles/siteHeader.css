@@ -1,0 +1,110 @@
+:root {
+  --text: var(--text);
+  --muted: var(--muted);
+  --glass: var(--glass);
+  --border: var(--border);
+  --radius: 16px;
+  --shadow: var(--shadow);
+  --brand: #7c5cff;
+  --brand-2: #4dc8ff;
+}
+
+.site-header {
+  position: sticky;
+  top: 0;
+  z-index: 40;
+  margin: 10px 18px 0;
+  padding: 12px 16px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  color: var(--text);
+  background: var(--glass);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+  box-shadow: var(--shadow);
+}
+
+.brand {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  text-decoration: none;
+  color: inherit;
+}
+.brand-mark {
+  font-size: 18px;
+}
+.brand-text {
+  font-weight: 800;
+  letter-spacing: 0.2px;
+}
+
+.site-header__nav {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+.nav-link {
+  color: var(--muted);
+  text-decoration: none;
+  padding: 8px 10px;
+  border-radius: 10px;
+}
+.nav-link:hover {
+  background: rgba(255, 255, 255, 0.08);
+  color: var(--text);
+}
+.nav-link.active {
+  color: var(--text);
+  background: rgba(255, 255, 255, 0.1);
+}
+
+.btn {
+  padding: 10px 14px;
+  border-radius: 12px;
+  text-decoration: none;
+  color: #fff;
+  background: linear-gradient(135deg, var(--brand), var(--brand-2));
+  box-shadow: var(--shadow);
+}
+.btn:hover {
+  filter: brightness(1.05);
+}
+
+/* theme toggle */
+.theme-toggle {
+  border: 1px solid var(--border);
+  background: rgba(255, 255, 255, 0.06);
+  color: var(--text);
+  border-radius: 10px;
+  padding: 8px 10px;
+  cursor: pointer;
+}
+
+/* 3-state segmented toggle */
+.seg-toggle {
+  display: inline-flex;
+  gap: 4px;
+  padding: 4px;
+  border-radius: 12px;
+  background: var(--muted-bg);
+  border: 1px solid var(--border);
+}
+.seg-toggle .seg {
+  background: transparent;
+  border: 0;
+  color: var(--text);
+  padding: 6px 10px;
+  border-radius: 8px;
+  cursor: pointer;
+}
+.seg-toggle .seg.active {
+  color: #fff;
+  background: linear-gradient(135deg, var(--brand), var(--brand-2));
+  box-shadow: var(--shadow);
+}
+
+/* small single-button variant already uses .theme-toggle from before */

@@ -1,9 +1,15 @@
-const url = require('../utils/env');
-const mongoose = require('mongoose');
-mongoose.connect(url.mongo);
+const mongoose = require("mongoose");
 
-mongoose.connection.on('open',()=>{
-    console.log("connected to database");
-})
+async function connectDB() {
+  const uri = process.env.MONGO_URI;
+  mongoose.set("strictQuery", true);
+  try {
+    await mongoose.connect(uri, { dbName: "personal_budget_tracker" });
+    console.log("MongoDB connected");
+  } catch (err) {
+    console.error("MongoDB connection error:", err.message);
+    process.exit(1);
+  }
+}
 
-module.exports = mongoose;
+module.exports = { connectDB };

@@ -1,0 +1,15 @@
+{
+  "files": {
+    "main.css": "/static/css/main.ead71a23.css",
+    "main.js": "/static/js/main.055ca4bc.js",
+    "static/media/person-profile.png": "/static/media/person-profile.a70779f1f0e37cac43dc.png",
+    "static/media/display.png": "/static/media/display.21156a6161405a238aa5.png",
+    "index.html": "/index.html",
+    "main.ead71a23.css.map": "/static/css/main.ead71a23.css.map",
+    "main.055ca4bc.js.map": "/static/js/main.055ca4bc.js.map"
+  },
+  "entrypoints": [
+    "static/css/main.ead71a23.css",
+    "static/js/main.055ca4bc.js"
+  ]
+}

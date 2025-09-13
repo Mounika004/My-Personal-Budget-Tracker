@@ -1,44 +1,81 @@
-import React from "react";
+import React, { useState } from "react";
 import "../styles/signup.css";
 import Header from "./Header";
-export const Login = (props) => {
-  return (
-    <div>
-      <Header />
-      <div className="container signup">
-        <div className="signup-logo">
-          <img src={require("../images/logo.png")} alt="" />
-        </div>
+import instance from "../utils/AxiosConfig";
+import { useDispatch } from "react-redux";
+import { loginSuccess } from "../redux/actionCreator/userAction";
 
-        <div className="signup-form">
-          <h3>WELCOME TO PERSONAL BUDGET TRACKER</h3>
-          <label htmlFor="">Email address</label>
+export default function Login({ history }) {
+  const [form, setForm] = useState({ email: "", password: "" });
+  const [showPwd, setShowPwd] = useState(false);
+  const [err, setErr] = useState("");
+  const [loading, setLoading] = useState(false);
+  const dispatch = useDispatch();
+  const onChange = (e) => setForm({ ...form, [e.target.id]: e.target.value });
+
+  const onLogin = async () => {
+    setErr("");
+    setLoading(true);
+    try {
+      const { data } = await instance.post("/user/login", {
+        email: String(form.email).trim(),
+        password: form.password,
+      });
+      localStorage.setItem("token", data.token);
+      localStorage.setItem("user", JSON.stringify(data.user));
+      dispatch(loginSuccess({ user: data.user }));
+      history.push("/dashboard");
+    } catch (e) {
+      setErr(e?.response?.data?.msg || "Invalid email or password");
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  return (
+    <div className="auth-page">
+      <div className="auth-bg" />
+      <Header />
+      <div className="auth-wrap">
+        <div className="auth-card glass">
+          <h2>Welcome back</h2>
+          <p className="mini">Log in to access your budgets & splits.</p>
+
+          <label>Email address</label>
           <input
             id="email"
-            onChange={props.input}
+            onChange={onChange}
             className="form-control"
-            type="text"
+            type="email"
+            placeholder="you@example.com"
           />
 
-          <label htmlFor="">Password</label>
-          <input
-            id="password"
-            onChange={props.input}
-            className="form-control"
-            type="text"
-          />
+          <label>Password</label>
+          <div className="password-field">
+            <input
+              id="password"
+              onChange={onChange}
+              className="form-control"
+              type={showPwd ? "text" : "password"}
+              placeholder="••••••••"
+            />
+            <button className="show-btn" onClick={() => setShowPwd((s) => !s)}>
+              {showPwd ? "Hide" : "Show"}
+            </button>
+          </div>
 
-          {props.sts && (
-            <p style={{ color: "red" }}>
-              <i class="fas fa-exclamation-circle"></i> Invalid Username or
-              Password
-            </p>
-          )}
-          <button onClick={props.login} className="btn">
-            Log In
-          </button>
+          {err && <p className="err">{err}</p>}
+
+          <div className="btn-row">
+            <button className="btn" onClick={onLogin} disabled={loading}>
+              {loading ? "Logging in…" : "Log In"}
+            </button>
+            <a className="btn outline" href="/signup">
+              Create account
+            </a>
+          </div>
         </div>
       </div>
     </div>
   );
-};
+}

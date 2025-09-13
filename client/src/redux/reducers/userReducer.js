@@ -1,9 +1,21 @@
-export const userReducer = (initState = {user: {friends:[]}},action)=>{
-   
-    if(action.type == 'AddUser'){
-        console.log("reducer...........................",action.payload);
-        return {user: action.payload};
+const initial = {
+  loggedIn: !!localStorage.getItem("token"),
+  user: (() => {
+    try {
+      return JSON.parse(localStorage.getItem("user") || "null");
+    } catch {
+      return null;
     }
+  })(),
+};
 
-    return initState;
+export function userReducer(state = initial, action) {
+  switch (action.type) {
+    case "LOGIN_SUCCESS":
+      return { ...state, loggedIn: true, user: action.payload.user };
+    case "LOGOUT":
+      return { ...state, loggedIn: false, user: null };
+    default:
+      return state;
+  }
 }

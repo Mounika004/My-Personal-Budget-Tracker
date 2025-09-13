@@ -1,8 +1,12 @@
-import {createStore} from 'redux';
-import {userReducer} from './reducers/userReducer';
+import { createStore, combineReducers } from "redux";
+import { userReducer } from "./reducers/userReducer";
+import { meReducer } from "./reducers/meReducer";
+import { uiReducer } from "./reducers/uiReducer";
 
-export const store = createStore(userReducer);
+const root = combineReducers({
+  user: userReducer,
+  me: meReducer,
+  ui: uiReducer,
+});
 
-store.subscribe(()=>{
-    console.log("subscribe .....",store.getState());
-})
+export const store = createStore(root);

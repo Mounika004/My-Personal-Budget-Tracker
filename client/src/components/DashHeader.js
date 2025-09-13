@@ -1,47 +1,49 @@
 import React from "react";
-import { NavLink } from "react-router-dom";
-import { connect } from "react-redux";
-
+import { useDispatch } from "react-redux";
+import { logout } from "../redux/actionCreator/userAction";
 import "../styles/dashHeader.css";
-const DashHeader = (props) => {
+
+export default function DashHeader({ onAddFriend, onAddExpense, onSettle }) {
+  const dispatch = useDispatch();
+
   return (
-    <nav className="DashboardNav fixed-top">
-      <NavLink to="/Dashboard">
-        <h3 className="landing-name">B U D G E T - T R A C K E R</h3>
-      </NavLink>
-
-      <div className="Dashfloat">
-        <NavLink to="/login">
-          <button
-            className="logoutbtn"
-            onClick={() => {
-              localStorage.removeItem("jwtToken");
-            }}
-          >
-            Log Out
-          </button>
-        </NavLink>
-
-        {console.log("inside DashHeader")}
-
-        <img
-          className="profile"
-          src={require("../images/person-profile.png")}
-          alt=""
-          srcset=""
-        />
-        <label htmlFor="">{props.user.username}</label>
+    <header className="dash-header">
+      <div className="brand-wrap">
+        <div className="brand-logo">💰</div>
+        <div className="brand-title">Budget Tracker</div>
       </div>
-    </nav>
+
+      <div className="header-center">
+        <div className="search">
+          <span className="icon">🔎</span>
+          <input placeholder="Search expenses, notes, friends…" />
+        </div>
+      </div>
+
+      <div className="header-actions">
+        <button className="btn ghost" onClick={onAddFriend}>
+          + Friend
+        </button>
+        <button className="btn" onClick={onAddExpense}>
+          + Expense
+        </button>
+        <button className="btn outline" onClick={onSettle}>
+          Settle
+        </button>
+        <div className="avatar" title="You">
+          M
+        </div>
+        <button
+          className="btn danger"
+          onClick={() => {
+            localStorage.removeItem("token");
+            localStorage.removeItem("user");
+            dispatch(logout());
+          }}
+        >
+          Logout
+        </button>
+      </div>
+    </header>
   );
-};
-
-const mapStateToProps = (state) => {
-  console.log("state is  ", state);
-  return {
-    user: state.user,
-  };
-};
-
-const fn = connect(mapStateToProps);
-export default fn(DashHeader);
+}

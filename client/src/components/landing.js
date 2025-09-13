@@ -1,47 +1,74 @@
 import React from "react";
-import "../styles/landing.css";
 import Header from "./Header";
+import "../styles/landing.css";
+import display from "../images/display.png"; // keep your existing filename; change to display.png if you renamed
 
-export const Landing = () => {
+export default function Landing() {
   return (
     <div className="landing">
+      <div className="landing-bg" />
       <Header />
 
-      <main>
-        <div className="landing-heading">
-          <h1 className="landing-header">
-            Track your expenses at your fingertips
+      {/* Hero */}
+      <section className="hero">
+        <div className="hero__text">
+          <h1>
+            Track. Split. <span className="grad-text">Save.</span>
           </h1>
-          <img
-            className="landing-big"
-            src={require("../images/display.png")}
-            alt="App preview"
-          />
-        </div>
+          <p className="subtitle">
+            Clean budgets, instant splits, and friendly reminders—so your money
+            works quietly in the background while you focus on life.
+          </p>
 
-        <div className="landing-feature">
-          <div className="landing-content">
-            <h1>Splitting expenses has never been easier.</h1>
-            <ul>
-              <li>
-                <i className="fas fa-check-circle"></i>&nbsp;&nbsp;Share bills
-              </li>
-              <li>
-                <i className="fas fa-check-circle"></i>&nbsp;&nbsp;Make sure
-                everyone gets paid back
-              </li>
-              <li>
-                <i className="fas fa-check-circle"></i>&nbsp;&nbsp;Settle up
-                with friends
-              </li>
-            </ul>
-
-            <a href="http://localhost:3000/signup">
-              <button className="landing-button">Get Started</button>
+          <div className="cta">
+            <a className="btn" href="/signup">
+              Get Started
+            </a>
+            <a className="btn outline" href="/login">
+              Live Demo
             </a>
           </div>
+
+          <ul className="bullets">
+            <li>• One-click expense splits</li>
+            <li>• Friend balances at a glance</li>
+            <li>• Cloud sync with security</li>
+          </ul>
         </div>
-      </main>
+
+        <div className="hero__visual">
+          <div className="blob blob-1" />
+          <div className="blob blob-2" />
+          <img className="hero-img" src={display} alt="App preview" />
+        </div>
+      </section>
+
+      {/* Features */}
+      <section className="features">
+        <div className="feature glass">
+          <div className="f-icon">⚡</div>
+          <h3>Fast & Simple</h3>
+          <p>Add expenses in seconds and keep everyone in sync.</p>
+        </div>
+        <div className="feature glass">
+          <div className="f-icon">🔒</div>
+          <h3>Private by Design</h3>
+          <p>Authentication enabled. So your data stays yours.</p>
+        </div>
+        <div className="feature glass">
+          <div className="f-icon">📊</div>
+          <h3>Smart Insights</h3>
+          <p>Modern cards and budgets that make sense at a glance.</p>
+        </div>
+      </section>
+
+      {/* CTA Footer */}
+      <section className="cta-foot glass">
+        <h3>Ready to get organized?</h3>
+        <a className="btn" href="/signup">
+          Create your free account
+        </a>
+      </section>
     </div>
   );
-};
+}

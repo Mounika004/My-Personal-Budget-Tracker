@@ -1,37 +1,138 @@
-.signup {
-  display: flex;
+:root {
+  --bg: #0b1020;
+  --bg2: #0e1429;
+  --text: #e7eaf3;
+  --muted: #a7b0c3;
+  --brand: #7c5cff;
+  --brand2: #4dc8ff;
+  --glass: rgba(255, 255, 255, 0.06);
+  --border: rgba(255, 255, 255, 0.1);
+  --radius: 16px;
+  --shadow: 0 10px 30px rgba(0, 0, 0, 0.35);
+  --err: #ff5c7c;
+}
+@media (prefers-color-scheme: light) {
+  :root {
+    --bg: #f6f7fb;
+    --bg2: #eef1f9;
+    --text: #1b2238;
+    --muted: #6c7691;
+    --glass: rgba(255, 255, 255, 0.85);
+    --border: rgba(14, 26, 57, 0.1);
+    --shadow: 0 12px 24px rgba(14, 26, 57, 0.12);
+  }
+}
 
-  margin-top: 8%;
+.auth-page {
+  min-height: 100vh;
+  color: var(--text);
+  background: linear-gradient(140deg, var(--bg) 30%, var(--bg2) 100%);
+  position: relative;
+}
+.auth-bg {
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+  background: radial-gradient(
+      900px 240px at 15% 20%,
+      rgba(124, 92, 255, 0.25),
+      transparent 60%
+    ),
+    radial-gradient(
+      900px 260px at 70% -10%,
+      rgba(77, 200, 255, 0.18),
+      transparent 60%
+    );
+  filter: blur(8px);
+  pointer-events: none;
+}
+
+.auth-wrap {
+  position: relative;
+  z-index: 1;
+  display: flex;
   align-items: center;
   justify-content: center;
+  padding: 5rem 1rem 3rem;
+}
+.auth-card {
+  width: min(560px, 92vw);
+  background: var(--glass);
+  border: 1px solid var(--border);
+  border-radius: 18px;
+  box-shadow: var(--shadow);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  padding: 18px;
+}
+.auth-card h2 {
+  margin: 0 0 4px;
+}
+.mini {
+  color: var(--muted);
+  font-size: 12px;
+  margin: 0 0 12px;
 }
 
-.signup-logo {
-  margin-right: 100px;
-  height: 300px;
+label {
+  display: block;
+  margin: 10px 0 6px;
+  font-weight: 600;
+}
+.form-control {
+  width: 100%;
+  padding: 12px 12px;
+  border-radius: 12px;
+  background: rgba(255, 255, 255, 0.08);
+  color: var(--text);
+  border: 1px solid rgba(255, 255, 255, 0.14);
+}
+.form-control::placeholder {
+  color: rgba(255, 255, 255, 0.6);
+}
+.password-field {
+  position: relative;
+}
+.show-btn {
+  position: absolute;
+  right: 6px;
+  top: 6px;
+  padding: 8px 10px;
+  border-radius: 10px;
+  border: 1px solid rgba(255, 255, 255, 0.18);
+  background: rgba(255, 255, 255, 0.06);
+  color: var(--text);
+  cursor: pointer;
 }
 
-.signup-form h3 {
-  font-size: 15px;
-  color: #99a4c1;
+.btn-row {
+  display: flex;
+  gap: 10px;
+  margin-top: 14px;
 }
-.signup-form label {
-  font-size: 22px;
+.btn {
+  padding: 12px 16px;
+  border-radius: 12px;
+  color: #fff;
+  border: none;
+  cursor: pointer;
+  background: linear-gradient(135deg, var(--brand), var(--brand2));
+  box-shadow: var(--shadow);
 }
-.signup-form input {
-  font-size: 25px;
-  margin-bottom: 10px;
+.btn:hover {
+  filter: brightness(1.05);
+}
+.btn[disabled] {
+  opacity: 0.7;
+  cursor: not-allowed;
+}
+.btn.outline {
+  background: transparent;
+  border: 1px solid var(--border);
+  color: var(--text);
 }
 
-.signup-form .btn {
-  /* padding: 25px; */
-  margin-top: 10px;
-  font-size: 20px;
-  background: #ff652f;
-  color: white;
-}
-
-/* Adds space only when a button follows another button */
-.signup-form .btn + .btn {
-  margin-left: 12px; /* change 12px to any spacing you like */
+.err {
+  color: var(--err);
+  margin-top: 8px;
 }

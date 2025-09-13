@@ -1,0 +1,28 @@
+/* Common brand colors (both themes use these) */
+:root {
+  --brand: #7c5cff;
+  --brand-2: #4dc8ff;
+  --radius: 16px;
+  --shadow: 0 10px 30px rgba(0, 0, 0, 0.35);
+}
+
+/* Dark theme variables */
+html[data-theme="dark"] {
+  --bg: #0b1020;
+  --bg2: #0e1429;
+  --text: #e7eaf3;
+  --muted: #a7b0c3;
+  --glass: rgba(255, 255, 255, 0.06);
+  --border: rgba(255, 255, 255, 0.1);
+}
+
+/* Light theme variables */
+html[data-theme="light"] {
+  --bg: #f6f7fb;
+  --bg2: #eef1f9;
+  --text: #1b2238;
+  --muted: #6c7691;
+  --glass: rgba(255, 255, 255, 0.85);
+  --border: rgba(14, 26, 57, 0.1);
+  --shadow: 0 12px 24px rgba(14, 26, 57, 0.12);
+}

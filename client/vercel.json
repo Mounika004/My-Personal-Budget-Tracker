@@ -1,0 +1,16 @@
+{
+  "version": 2,
+  "builds": [{ "src": "package.json", "use": "@vercel/static-build" }],
+  "env": {
+    "REACT_APP_API_URL": "https://your-server.onrender.com/api"
+  },
+  "build": {
+    "env": {
+      "CI": "false"
+    }
+  },
+  "routes": [
+    { "handle": "filesystem" },
+    { "src": "/.*", "dest": "/index.html" }
+  ]
+}

@@ -1,6 +1,2 @@
-export const userActionCreator = (user,type)=>{
-     return{
-        payload: {...user},
-        type: type
-    };
-}
+export const loginSuccess = (payload) => ({ type: "LOGIN_SUCCESS", payload });
+export const logout = () => ({ type: "LOGOUT" });

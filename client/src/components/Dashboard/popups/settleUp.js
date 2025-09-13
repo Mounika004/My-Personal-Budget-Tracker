@@ -1,111 +1,200 @@
-import React from 'react';
-import '../../../styles/frndPop.css';
-import { PaidBy } from './paidBy';
-import { PaidTo } from './paidTo';
-import { connect } from "react-redux";
-import { instance } from '../../../utils/AxiosConfig';
-import { store } from '../../../redux/store';
-import { userActionCreator } from '../../../redux/actionCreator/userAction';
- class SettleUp extends React.Component{
-    constructor(props){
-    super(props);
-    this.val = 0;
-    this.props.user.friends.push(this.props.user.username);
-    this.state = {paidBy:false,paidTo:false,byValue: "you",toValue:"select"}
-    }
-     PaidBy() {
-        this.setState({paidBy: !this.state.paidBy,paidTo:false});
-    }
+import React, { useMemo, useState } from "react";
+import { useSelector } from "react-redux";
+import { settleWithFriend } from "../../../data/meApi";
+import { computeFromExpenses, formatCurrency } from "../../../utils/finance";
+import { getFriendLabel } from "../../../utils/friends";
+import "../../../styles/frndPop.css";
 
-    PaidTo() {
-        this.setState({paidBy:false,paidTo: !this.state.paidTo});
-    }
-    byValue(event){
-       
-     if(event == this.props.user.username) event = "you"
-    //  else {
-    //     event = event.slice(0,6); 
-    //     event = event+"..."
-    //  }
-       
-        this.setState({...this.state,byValue: event});
-    }
-    toValue(event){
-     if(event == this.props.user.username) event = "you";
-    
-         this.setState({...this.state,toValue: event});
-     }
-     Save(){
-         if(this.state.toValue == "select"){
-             alert("please select the reciver");
-             return;
-         }
-         else if(this.val == ""){
-            alert("you must enter an amount");
-            return;
-         }
-         else if(this.state.toValue != "you" && this.state.byValue != "you"){
-            alert("you cannot add an Expense that does not involve yourself");
-         }
-         else if(this.state.toValue == this.state.byValue){
-            alert("you can't add money to yourself");
-           }
-       else{ 
-           var sender;
-            if(this.state.toValue == "you"){
-                this.val = "-" + this.val;
-                sender =  this.state.byValue;
-            }else sender = this.state.toValue;
-
-            console.log(parseInt(this.val),this.state.byValue,this.state.toValue);
-          instance.post("/settle",{username: this.props.user.username,user: sender,val: parseInt(this.val)}).then((resp)=>{
-              console.log(resp.data.doc);
-              var action = userActionCreator(resp.data.doc,'AddUser');
-              store.dispatch(action);
-              
-              this.props.friend();
-          });
-       } 
-    }
-  render(){
-        return (
-        <div className = "friendPopup">
-        <div className = "flx">
-        <div className = "frnd-content">
-        <div className = "frnd-header">   
-        <span>Settle up</span>
-        <button className = "float-right" onClick = {this.props.friend}><i class="fas fa-times"></i></button>
-        </div>
-
-        <div className = "frnd-set">
-        <button onClick = {this.PaidBy.bind(this)}>{(this.state.byValue == "you")?"you":this.state.byValue.slice(0,6) + "..."}</button> paid <button onClick = {this.PaidTo.bind(this)}>{(this.state.toValue == "you" || this.state.toValue == "select")?this.state.toValue:this.state.toValue.slice(0,6) + "..."}</button>
-        </div>
-      
-      <input className = "money" onChange = {(event)=>{
-          this.val = event.target.value;
-      }} placeholder = "$ 0.0" type="number" name="" id=""/>
-      <div className = "pop-btn bt-mr">
-
-        <button className = "btn Add" onClick = {this.Save.bind(this)}>Save</button>
-
-        <button className = "btn cut" onClick = {this.props.friend}>Close</button>
-    </div>
-        </div>
-        
-        {this.state.paidBy && <PaidBy list = {this.props.user.friends} byValue = {this.byValue.bind(this)}/>}
-        {this.state.paidTo && <PaidTo list = {this.props.user.friends}  toValue = {this.toValue.bind(this)}/>}
-
-        </div>
-
-    </div>
-    )}
+function niceNameFromEmail(email) {
+  const local = String(email || "").split("@")[0];
+  return local.replace(/[._-]+/g, " ").replace(/\b\w/g, (m) => m.toUpperCase());
 }
-const mapStateToProps = state => {
-    console.log("state is  ", state);
-    return {
-      user: state.user
-    };
+
+export default function SettleUp({ onClose }) {
+  const { me, expenses, friends = [] } = useSelector((s) => s.me);
+
+  // --- Balances relative to current user
+  const { perFriend } = useMemo(
+    () => computeFromExpenses(me?.email, expenses),
+    [me, expenses]
+  );
+
+  // Build options = friends ∪ anyone in balances
+  const balanceMap = new Map(perFriend.map((x) => [x.friend, x.value]));
+  const friendEmails = Array.from(
+    new Set([...(friends || []), ...balanceMap.keys()])
+  );
+
+  const options = friendEmails
+    .map((email) => {
+      const label = getFriendLabel(email) || niceNameFromEmail(email);
+      const bal = balanceMap.get(email) || 0; // + => they owe me, - => I owe them
+      return { email, label, balance: bal };
+    })
+    .sort((a, b) => a.label.localeCompare(b.label));
+
+  const first = options[0] || null;
+
+  const [friend, setFriend] = useState(first?.email || "");
+  const [amount, setAmount] = useState(first ? Math.abs(first.balance) : "");
+  // direction: 'they_pay' | 'i_pay'
+  const inferDir = (bal) => (bal > 0 ? "they_pay" : "i_pay"); // default by balance
+  const [direction, setDirection] = useState(
+    first ? inferDir(first.balance) : "they_pay"
+  );
+
+  const [busy, setBusy] = useState(false);
+  const [msg, setMsg] = useState("");
+
+  const current = options.find((o) => o.email === friend);
+  const bal = current?.balance || 0;
+
+  const hint = !current
+    ? ""
+    : bal > 0
+    ? `${current.label} owes you ${formatCurrency(bal)}`
+    : bal < 0
+    ? `You owe ${current.label} ${formatCurrency(Math.abs(bal))}`
+    : `No balance with ${current.label} — record a transfer`;
+
+  const onSelectFriend = (email) => {
+    const picked = options.find((o) => o.email === email);
+    setFriend(email);
+    setAmount(picked ? Math.abs(picked.balance) : "");
+    setDirection(picked ? inferDir(picked.balance) : "they_pay");
   };
-  
-  const fn = connect(mapStateToProps);
-  export default fn(SettleUp);
+
+  const submit = async () => {
+    setMsg("");
+    if (!friend) {
+      setMsg("Please choose a friend");
+      return;
+    }
+    const amt = Number(amount);
+    if (!amt || amt <= 0) {
+      setMsg("Enter a valid amount");
+      return;
+    }
+
+    try {
+      setBusy(true);
+      // NOTE: direction overrides auto logic in the API helper
+      await settleWithFriend(friend, amt, direction);
+      onClose(); // parent reloads data
+    } catch {
+      setMsg("Could not record settlement");
+    } finally {
+      setBusy(false);
+    }
+  };
+
+  return (
+    <div className="modal">
+      <div className="modal-card glass">
+        <h3>Settle Up</h3>
+
+        {/* Friend picker */}
+        <label className="mini">Choose a friend</label>
+        <select
+          value={friend}
+          onChange={(e) => onSelectFriend(e.target.value)}
+          className="select"
+        >
+          <option value="" disabled>
+            Select friend…
+          </option>
+          {options.map((o) => (
+            <option key={o.email} value={o.email}>
+              {o.label}
+            </option>
+          ))}
+        </select>
+
+        {/* Direction toggle */}
+        <label className="mini" style={{ marginTop: 10 }}>
+          Who pays?
+        </label>
+        <div
+          className="seg-toggle"
+          role="tablist"
+          aria-label="Settlement direction"
+        >
+          <button
+            type="button"
+            role="tab"
+            className={`seg ${direction === "they_pay" ? "active" : ""}`}
+            onClick={() => setDirection("they_pay")}
+            aria-selected={direction === "they_pay"}
+          >
+            They pay me
+          </button>
+          <button
+            type="button"
+            role="tab"
+            className={`seg ${direction === "i_pay" ? "active" : ""}`}
+            onClick={() => setDirection("i_pay")}
+            aria-selected={direction === "i_pay"}
+          >
+            I pay them
+          </button>
+        </div>
+
+        {/* Amount */}
+        <label className="mini" style={{ marginTop: 10 }}>
+          Amount to settle
+        </label>
+        <input
+          type="number"
+          placeholder="Enter amount"
+          value={amount}
+          onChange={(e) => setAmount(e.target.value)}
+        />
+
+        {/* Context hint */}
+        {current && (
+          <div className="mini" style={{ marginTop: 6 }}>
+            {hint}
+          </div>
+        )}
+
+        {/* Quick picks for non-zero balances */}
+        {options.some((o) => o.balance !== 0) && (
+          <div className="chip-suggest" style={{ marginTop: 10 }}>
+            {options
+              .filter((o) => o.balance !== 0)
+              .slice(0, 8)
+              .map((o) => (
+                <button
+                  key={o.email}
+                  className="pill"
+                  onClick={() => {
+                    setFriend(o.email);
+                    setAmount(Math.abs(o.balance));
+                    setDirection(inferDir(o.balance));
+                  }}
+                  title={o.email}
+                >
+                  {o.label} · {formatCurrency(Math.abs(o.balance))}
+                </button>
+              ))}
+          </div>
+        )}
+
+        <div className="modal-actions">
+          <button className="btn" disabled={busy} onClick={submit}>
+            {busy ? "Saving…" : "Settle"}
+          </button>
+          <button className="btn outline" onClick={onClose}>
+            Close
+          </button>
+        </div>
+
+        {msg && (
+          <div className="mini" style={{ marginTop: 8 }}>
+            {msg}
+          </div>
+        )}
+      </div>
+    </div>
+  );
+}
