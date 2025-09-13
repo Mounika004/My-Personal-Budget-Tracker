@@ -7,7 +7,7 @@ Use npm install to install all the dependencies. (In Terminal)
 
 2. cd/server
    npm install
-   mpm run dev
+   npm run dev
 
 Use npm start to start the client side sever . (In another Terminal)
 4. cd/client
