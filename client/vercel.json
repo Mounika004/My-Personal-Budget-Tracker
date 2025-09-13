@@ -2,7 +2,7 @@
   "version": 2,
   "builds": [{ "src": "package.json", "use": "@vercel/static-build" }],
   "env": {
-    "REACT_APP_API_URL": "https://your-server.onrender.com/api"
+    "REACT_APP_API_URL": "https://budget-tracker-server-86m5.onrender.com"
   },
   "build": {
     "env": {
